@@ -1,0 +1,7 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+data/sample_resume.txt
+data/resume_agent_output.txt
+data/report.md
