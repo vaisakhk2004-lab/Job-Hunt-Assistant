@@ -35,8 +35,8 @@ Rules:
         expected_output="""
 Exactly two sections, each starting with its marker on its own line:
 <<RESUME>>
-(the full tailored resume in plain text: name and contact line, a 2-3 sentence summary,
-skills, projects, experience if present, education, certifications; fits one page)
+(the full tailored resume in plain text: based on the master resume provided.Tailor the resume to the job description, including only relevant 
+skills, projects, experience ,education, certifications if present; fits one page)
 <<COVER_LETTER>>
 (a complete cover letter of about 250 words, signed with the candidate's name from the resume)
 Output nothing before the first marker.
