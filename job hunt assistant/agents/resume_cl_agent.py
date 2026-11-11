@@ -14,14 +14,30 @@ def get_resume_cl_agent():
     return Agent(max_iter=3,role='resume and cover letter maker',goal='to help job seekers tailor their resumes and cover letters',llm=llm,backstory='you are an expert at tailoring resume and writing cover letter based on the job requirements')
 
 def create_resume_cl_task(agent,jd_task):
-    return Task(agent=agent,output_file='/data/resume_agent_output.txt',description="""tailor resumes and generate personalized cover letters professionally based on a job description.The resume text is a master resume containing more than will fit on one page.
-Choose only the projects, skills and bullets most relevant to this job and leave the rest out.
-Two different jobs should produce visibly different resumes. you will  be provided with a resume_text{resume_text}. Do not invent skills or experience.""",
-    expected_output="""
-        Exactly two sections, each starting with its marker on its own line:
-        <<RESUME_SUMMARY>>
-        (a tailored resume summary of 3-4 sentences)
-        <<COVER_LETTER>>
-        (a complete cover letter, about 250 words)
-        Output nothing before the first marker.
-        """,context=[jd_task])
+    return Task(agent=agent,output_file='/data/resume_agent_output.txt',description="""
+Using the job analysis from the previous task and the candidate's master resume below,
+create a tailored one-page resume and a cover letter.
+
+Master resume:
+{resume_text}
+
+Rules:
+1. Use ONLY facts present in the master resume. Never invent skills, tools, employers,
+   dates, years of experience, citizenship, work authorization or location.
+2. Keep the candidate's name and contact details exactly as in the master resume.
+   If a detail is missing, omit it. Never write placeholders like [Your Name].
+3. The master resume has more than fits on one page. Select only the projects, skills
+   and bullets most relevant to this job and leave the rest out. Put the most relevant
+   items first.
+4. Use the job's keywords only where they truthfully describe the candidate's work.
+5. If the job requires something the resume does not show, do not claim it.
+""",
+        expected_output="""
+Exactly two sections, each starting with its marker on its own line:
+<<RESUME>>
+(the full tailored resume in plain text: name and contact line, a 2-3 sentence summary,
+skills, projects, experience if present, education, certifications; fits one page)
+<<COVER_LETTER>>
+(a complete cover letter of about 250 words, signed with the candidate's name from the resume)
+Output nothing before the first marker.
+""",context=[jd_task])

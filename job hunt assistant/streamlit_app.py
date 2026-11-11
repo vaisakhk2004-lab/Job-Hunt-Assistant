@@ -48,12 +48,6 @@ if 'jobs' in st.session_state:
         labels = [f"{j['title']} - {j['organization']} ({j['location']})" for j in jobs]
         choice = st.selectbox('Select a job', range(len(jobs)), format_func=lambda i: labels[i])
         job = jobs[choice]
-
-        with st.expander('Job details'):
-            st.write(job['duties'])
-            st.write(job['qualifications'])
-            st.caption(job['url'])
-
         if st.button('Generate application'):
             try:
                 with st.spinner('Running the agents (this takes a few minutes)...'):
@@ -63,12 +57,15 @@ if 'jobs' in st.session_state:
                         'resume_text': st.session_state.resume_text,
                     })
                 # Tasks run in order: JD analysis, resume + cover letter, outreach message
-                st.session_state.result = result.raw
+                st.session_state.jd_report = result.tasks_output[0].raw
                 st.session_state.resume_output = result.tasks_output[1].raw
+                st.session_state.result = result.tasks_output[2].raw
             except Exception as e:
                 st.error(f'The pipeline failed: {e}')
 
 if 'result' in st.session_state:
+    st.markdown('### Job description')
+    st.text(st.session_state.jd_report)
     st.markdown('### Outreach message')
     st.write(st.session_state.result)
     if st.session_state.get('resume_output'):

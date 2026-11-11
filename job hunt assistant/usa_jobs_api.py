@@ -38,7 +38,7 @@ def fetch_usajobs(keyword, location="remote",results_per_page=5,limit=3):
 
 #     print("Status code:", response.status_code)
     
-print(job_api_key)
+
 
 
 
