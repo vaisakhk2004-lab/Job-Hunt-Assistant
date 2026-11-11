@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 env_path = r'C:\Users\VYSHAK\Downloads\crew multi agent\job hunt assistant\.env'
 load_dotenv(env_path)
 job_api_key=os.getenv('USAJOBS_API_KEY')
+if not job_api_key :
+    raise RuntimeError("Set USAJOBS_API_KEY and USAJOBS_EMAIL in .env")
 def fetch_usajobs(keyword, location="remote",results_per_page=5,limit=3):
     headers={'Host':"data.usajobs.gov",
             'User-Agent':'vaisakhk077@gmail.com',
