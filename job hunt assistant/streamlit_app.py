@@ -1,8 +1,21 @@
 import json, os
+from pathlib import Path
 import streamlit as st
+
+BASE = Path(__file__).parent
+os.chdir(BASE)  # agents write to relative data/ paths, so run from this folder
+(BASE / "data").mkdir(exist_ok=True)
+
+# Cloud: copy Streamlit secrets into the environment before the agent modules read them
+try:
+    for k in ("USAJOBS_API_KEY", "USAJOBS_EMAIL", "GEMINI_API_KEY"):
+        if k in st.secrets:
+            os.environ[k] = st.secrets[k]
+except Exception:
+    pass  # local run: keys come from .env
+
 from usa_jobs_api import fetch_usajobs
 from orchestrator import run_pipeline
-OUTPUT = r'C:\Users\VYSHAK\Downloads\crew multi agent\job hunt assistant\data\resume_agent_output.txt'  
 
 st.title('Job assistant')
 
@@ -16,13 +29,16 @@ if searched:
     if not keyword.strip() or not resume_text.strip():
         st.warning('Please enter a job keyword and your resume text.')
     else:
-        with st.spinner('Searching USAJOBS...'):
-            jobs = fetch_usajobs(keyword.strip(), location=location.strip() or 'remote',
-                                 results_per_page=50, limit=5)
-        st.session_state.jobs = jobs
-        st.session_state.resume_text = resume_text
-        st.session_state.pop('result', None)
-
+        try:
+            with st.spinner('Searching USAJOBS...'):
+                jobs = fetch_usajobs(keyword.strip(), location=location.strip() or 'remote',
+                                     results_per_page=50, limit=5)
+            st.session_state.jobs = jobs
+            st.session_state.resume_text = resume_text
+            st.session_state.pop('result', None)
+            st.session_state.pop('resume_output', None)
+        except Exception as e:
+            st.error(f'Job search failed: {e}')
 
 if 'jobs' in st.session_state:
     jobs = st.session_state.jobs
@@ -39,8 +55,6 @@ if 'jobs' in st.session_state:
             st.caption(job['url'])
 
         if st.button('Generate application'):
-            if os.path.exists(OUTPUT):
-                os.remove(OUTPUT)
             try:
                 with st.spinner('Running the agents (this takes a few minutes)...'):
                     crew = run_pipeline()
@@ -48,13 +62,11 @@ if 'jobs' in st.session_state:
                         'details': json.dumps(job, indent=2),
                         'resume_text': st.session_state.resume_text,
                     })
-                st.session_state.result = str(result)
-                st.session_state.resume_output = (
-                    open(OUTPUT, encoding='utf-8').read() if os.path.exists(OUTPUT) else ''
-                )
+                # Tasks run in order: JD analysis, resume + cover letter, outreach message
+                st.session_state.result = result.raw
+                st.session_state.resume_output = result.tasks_output[1].raw
             except Exception as e:
                 st.error(f'The pipeline failed: {e}')
-
 
 if 'result' in st.session_state:
     st.markdown('### Outreach message')
