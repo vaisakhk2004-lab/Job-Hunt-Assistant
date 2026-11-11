@@ -2,7 +2,7 @@
 from crewai import Task,Agent,LLM
 import os
 from dotenv import load_dotenv
-env_path = 'C:\\Users\\VYSHAK\\Downloads\\crew multi agent\\.env'
+env_path = r'C:\Users\VYSHAK\Downloads\Multi job assistant using Crew ai\job hunt assistant\.env'
 load_dotenv(dotenv_path=env_path)
 gemini_api_key=os.getenv('GEMINI_API_KEY')
 

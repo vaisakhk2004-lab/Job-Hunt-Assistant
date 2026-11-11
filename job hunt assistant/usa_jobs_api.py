@@ -1,6 +1,6 @@
 import requests,os
 from dotenv import load_dotenv
-env_path = r'C:\Users\VYSHAK\Downloads\crew multi agent\job hunt assistant\.env'
+env_path = r'C:\Users\VYSHAK\Downloads\Multi job assistant using Crew ai\job hunt assistant\.env'
 load_dotenv(env_path)
 job_api_key=os.getenv('USAJOBS_API_KEY')
 if not job_api_key :
@@ -38,7 +38,7 @@ def fetch_usajobs(keyword, location="remote",results_per_page=5,limit=3):
 
 #     print("Status code:", response.status_code)
     
-#     print(job_details)
+print(job_api_key)
 
 
 
