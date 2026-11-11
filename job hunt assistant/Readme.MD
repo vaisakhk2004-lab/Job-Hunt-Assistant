@@ -1,5 +1,6 @@
 # Job Hunt Assistant
-# App Link:-https://job-hunt-assistant-dgxnfrjpqpcb5qlkyefpgf.streamlit.app
+App Link:-https://job-hunt-assistant-dgxnfrjpqpcb5qlkyefpgf.streamlit.app
+
 A multi-agent application that takes a job keyword and your resume, finds matching listings from the USAJOBS API, and generates a tailored resume summary, cover letter and outreach message for the job you pick.
 
 Built with [CrewAI](https://www.crewai.com/), Google Gemini, Streamlit and the USAJOBS Search API.
